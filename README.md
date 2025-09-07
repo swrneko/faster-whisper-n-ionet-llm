@@ -30,6 +30,11 @@
   cd faster-whisper-n-ionet-llm
   ```
 
+1.1 Insatll conda (if not insatlled):
+  ```
+  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && bash miniconda.sh 
+  ```
+
 2. Create virtual env:
   ```
   conda create -n faster-whisper-n-ionet-llm python=3.10
