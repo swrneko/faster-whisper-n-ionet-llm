@@ -7,13 +7,10 @@
 ## Screenshots
 <div align="center">
   <div>
-    <p>Main panel</p>
     <img src="src/1.png" style="object-fit: cover;"/>
   </div>
   <div style="align-items: center;">
-    <text>faster-whisper settings menu</text>
     <img src="src/2.png" style="width: 49.7%; object-fit: cover;"/>
-    <text>io.net api settings menu</text>
     <img src="src/3.png" style="width: 49.7%; object-fit: cover;"/>
   </div>
 </div>
