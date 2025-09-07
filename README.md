@@ -1,24 +1,23 @@
 # FWAL WebUI (Faster Whisper And LLM WebUI) by swrneko
 
 <div align="center">
-  <img src="https://count.getloli.com/get/@swrneko-faster-whisper-n-ionet-llm?theme=rule34"/>
+  <img src="https://count.getloli.com/get/@swrneko-faster-whisper-llm?theme=rule34"/>
 </div>
 
 ## Screenshots
-<div>
+<div align="center">
   <div>
     <p>Main panel</p>
-    <img src='src/1.png'/>
+    <img src="src/1.png" style="object-fit: cover;"/>
   </div>
-  <div>
-    <p>faster-whisper settings menu</p>
-    <img src='src/2.png'/>
-  </div>
-  <div>
-    <p>io.net api settings menu</p>
-    <img src='src/3.png'/>
+  <div style="align-items: center;">
+    <text>faster-whisper settings menu</text>
+    <img src="src/2.png" style="width: 49.7%; object-fit: cover;"/>
+    <text>io.net api settings menu</text>
+    <img src="src/3.png" style="width: 49.7%; object-fit: cover;"/>
   </div>
 </div>
+
 
 ## Requirements
   - python-conda or miniconda;
