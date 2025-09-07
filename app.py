@@ -115,7 +115,7 @@ with gr.Blocks() as demo:
             with gr.Column():
                 with gr.Accordion(label='Settings'):
                     # Первое поле на всю ширину в акордионе настроек
-                    filename = gr.Textbox(label='Output filename', value='output.txt')
+                    filename = gr.Textbox(label='Output filename', value='output.txt', interactive=True)
 
                     # Акордион настроек faster whisper
                     with gr.Accordion(label='Faster whisper settings'):
@@ -162,5 +162,6 @@ with gr.Blocks() as demo:
 
     recognizeBtn.click(recognize, outputs=[recognizedText], inputs=[fastWhisperModel, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
     recognizedText.change(Llm(apiKey.value).generate, inputs=[llmModel, systemPrompt, recognizedText, llmTemperature], outputs=[refinedText, refinedTextMD])
+    refinedText.change(saveFile, inputs=[filename, refinedText])
                 
 demo.launch()
