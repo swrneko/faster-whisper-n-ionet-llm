@@ -29,8 +29,8 @@
   git clone https://github.com/swrneko/faster-whisper-n-ionet-llm.git
   cd faster-whisper-n-ionet-llm
   ```
-
-1.1 Insatll conda (if not insatlled):
+  also (if not insatlled)
+  - Insatll conda:
   ```
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && bash miniconda.sh 
   ```
