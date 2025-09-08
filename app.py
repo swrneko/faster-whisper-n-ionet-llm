@@ -47,7 +47,7 @@ Use only russian language!
 
 faster_whisper_models_list = ['tiny', 'base', 'small', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large', 'distil-large-v2', 'distil-large-v3', 'distil-large-v3.5', 'large-v3-turbo', 'turbo']
 llm_models_list = ['openai/gpt-oss-120b', 'Qwen/Qwen3-235B-A22B-Thinking-2507', 'deepseek-ai/DeepSeek-R1-0528', 'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8', 'openai/gpt-oss-20b', 'Intel/Qwen3-Coder-480B-A35B-Instruct-int4-mixed-ar', 'meta-llama/Llama-3.2-90B-Vision-Instruct', 'mistralai/Mistral-Nemo-Instruct-2407', 'Qwen/Qwen2.5-VL-32B-Instruct', 'meta-llama/Llama-3.3-70B-Instruct', 'mistralai/Devstral-Small-2505', 'mistralai/Magistral-Small-2506', 'mistralai/Mistral-Large-Instruct-2411', 'CohereForAI/aya-expanse-32b']
-
+is_pipeline_enabled = True
 
 # Функция транскрибации
 def recognize(model, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText):
@@ -74,6 +74,23 @@ def recognize(model, audioFile, beamSize, vadFilter, minSilenceDurationMs, speec
     
     return(text)
 
+def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger):
+    llm = Llm(api_key)
+
+    # если чекбокс включен и событие было change → обрабатываем
+    if is_pipeline_enabled and trigger == "change":
+        result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
+        saveFile("output.txt", result)
+        return result, result
+
+    # если чекбокс выключен и событие было click → обрабатываем
+    if not is_pipeline_enabled and trigger == "click":
+        result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
+        saveFile("output.txt", result)
+        return result, md
+
+    # если нет чекбокса и было событие change
+    return gr.skip(), gr.skip()
 
 def format_timestamp(seconds: float) -> str:
     millis = int(seconds * 1000)
@@ -90,7 +107,15 @@ def saveFile(filename, text):
     filePath.parent.mkdir(parents=True, exist_ok=True)
     filePath.write_text(text, encoding='utf-8')
 
+# Функция для динамического обновления кнопки в зависимости от состояния checkbox
+def updateButton(isChecked):
+    if not isChecked:
+        variant = 'primary'
+    else:
+        variant = 'secondary'
+    return gr.update(interactive=not isChecked, variant=variant)
 
+# Интерфейс
 with gr.Blocks() as demo:
     gr.HTML('''
     <div align=center>
@@ -151,17 +176,37 @@ with gr.Blocks() as demo:
                         with gr.Row():
                             llmModel = gr.Dropdown(label='models', choices=llm_models_list, value=llm_models_list[0], interactive=True)
                             llmTemperature = gr.Number(label='Temperature', value=0.8, interactive=True )
+
         with gr.Column():
             with gr.Accordion(label='LLM'):
+                isPipelineEnabledCheckbox = gr.Checkbox(label='is pipeline enabled', value=True, interactive=True)
+                refineTextBtn = gr.Button('refine text', variant='secondary', interactive=False)
+
                 with gr.Accordion(label='Refined text raw'):
-                    refinedText = gr.Textbox(label='')
+                    refinedText = gr.Textbox(label='', show_copy_button=True)
 
                 with gr.Accordion(label='Refined text md formated'):
                     refinedTextMD = gr.Markdown(label='')
 
 
+    isPipelineEnabledCheckbox.change(updateButton, inputs=isPipelineEnabledCheckbox, outputs=refineTextBtn)
+
     recognizeBtn.click(recognize, outputs=[recognizedText], inputs=[fastWhisperModel, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
-    recognizedText.change(Llm(apiKey.value).generate, inputs=[llmModel, systemPrompt, recognizedText, llmTemperature], outputs=[refinedText, refinedTextMD])
-    refinedText.change(saveFile, inputs=[filename, refinedText])
-                
+    
+    # Если пайплайн включен то тогда делаем автоматически
+    # автоматический пайплайн
+    recognizedText.change(
+        generateByCondition,
+        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change")],
+        outputs=[refinedText, refinedTextMD]
+    )
+
+    # ручной запуск по кнопке
+    refineTextBtn.click(
+        generateByCondition,
+        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click")],
+        outputs=[refinedText, refinedTextMD]
+    )
+
+
 demo.launch()
