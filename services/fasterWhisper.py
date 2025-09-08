@@ -1,9 +1,6 @@
 from faster_whisper import WhisperModel
 
 class FasterWhisper:
-    def __init__(self):
-        pass
-
     def recognize(self, model, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText):
         model = WhisperModel(model, device='cuda', compute_type='float16') # Задаем модель
 

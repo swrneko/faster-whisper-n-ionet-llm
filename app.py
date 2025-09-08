@@ -133,7 +133,7 @@ with gr.Blocks() as demo:
     isPipelineEnabledCheckbox.change(updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
     saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filename)
 
-    recognizeBtn.click(FasterWhisper.recognize, outputs=[recognizedText], inputs=[fastWhisperModel, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
+    recognizeBtn.click(FasterWhisper().recognize, outputs=[recognizedText], inputs=[fastWhisperModel, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
     
     # Если пайплайн включен то тогда делаем автоматически
     # автоматический пайплайн
