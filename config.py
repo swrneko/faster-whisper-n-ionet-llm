@@ -44,5 +44,6 @@ Guidelines:
 
 Final Output: A cohesive, detailed, and well-structured lecture summary, suitable for later studying and revision.
 Use only russian language!
+USE LATEX IN DOLLAR SIGN ($)!
 '''
 

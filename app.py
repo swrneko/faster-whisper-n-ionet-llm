@@ -1,9 +1,11 @@
 import gradio as gr
+
 from pathlib import Path
 
 # Подгрузка сервисов
 from services.llm import Llm
 from services.fasterWhisper import FasterWhisper
+from services.convertMdToPdf import ConvertMdToPdf
 
 # Загрузка параметров конфигурации
 from config import *
@@ -16,30 +18,38 @@ def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_
     if is_pipeline_enabled and trigger == "change":
         result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
 
+        # Конвертируем текст с латексом в юникод
+        unicodeText = ConvertMdToPdf().convertLatexToText(md)
+
         if isSaveFile:
             saveFile("output.txt", result)
 
-        return result, result
+        return result, unicodeText
 
     # если чекбокс выключен и событие было click → обрабатываем
     if not is_pipeline_enabled and trigger == "click":
         result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
 
+        # Конвертируем текст с латексом в юникод
+        unicodeText = ConvertMdToPdf().convertLatexToText(md)
+
         if isSaveFile:
             saveFile("output.txt", result)
 
-        return result, md
+        return result, unicodeText
 
     # если нет чекбокса и было событие change
     return gr.skip(), gr.skip()
 
 
-# Функция сохранения файла
+# Функция сохранеhния файла
 def saveFile(filename, text):
     directory = Path(OUTPUT_PATH)
     filePath = directory / filename
     filePath.parent.mkdir(parents=True, exist_ok=True)
     filePath.write_text(text, encoding='utf-8')
+
+#    ConvertMdToPdf().convert(text)
 
 # Функция для динамического обновления кнопки в зависимости от состояния checkbox
 def updateButton(isChecked):
@@ -80,8 +90,10 @@ with gr.Blocks() as demo:
             with gr.Column():
                 with gr.Accordion(label='Settings'):
                     # Первое поле на всю ширину в акордионе настроек
-                    saveFileCheckbox = gr.Checkbox(label='save file', value=True, interactive=True)
-                    filename = gr.Textbox(label='Output filename', value='output.txt', interactive=True)
+                    with gr.Group():
+                        saveFileCheckbox = gr.Checkbox(label='save file', value=True, interactive=True)
+                        filename = gr.Textbox(label='Output filename', value='output.txt', interactive=True)
+
 
                     # Акордион настроек faster whisper
                     with gr.Accordion(label='Faster whisper settings'):

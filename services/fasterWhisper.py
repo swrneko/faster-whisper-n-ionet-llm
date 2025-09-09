@@ -2,7 +2,7 @@ from faster_whisper import WhisperModel
 
 class FasterWhisper:
     def recognize(self, model, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText):
-        model = WhisperModel(model, device='cuda', compute_type='float16') # Задаем модель
+        model = WhisperModel(model, device='auto', compute_type='auto') # Задаем модель
 
         segments, _ = model.transcribe( # Распознаем текст
             audioFile,
@@ -32,5 +32,3 @@ class FasterWhisper:
         seconds_int = (millis % (60 * 1000)) // 1000
         millis = millis % 1000
         return f"{hours:02d}:{minutes:02d}:{seconds_int:02d},{millis:03d}"
-
-
