@@ -1,5 +1,4 @@
 import gradio as gr
-
 from pathlib import Path
 
 # Подгрузка сервисов
@@ -153,6 +152,7 @@ with gr.Blocks() as demo:
 
     isPipelineEnabledCheckbox.change(updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
     saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filename)
+    saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
 
     recognizeBtn.click(FasterWhisper().recognize, outputs=[recognizedText], inputs=[fastWhisperModel, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
     
