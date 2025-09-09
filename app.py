@@ -11,7 +11,7 @@ from services.convertMdToPdf import ConvertMdToPdf
 from config import *
 
 # Функция транскрибации
-def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile):
+def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile, filename, filenamePdf):
     llm = Llm(api_key)
 
     # если чекбокс включен и событие было change → обрабатываем
@@ -19,10 +19,11 @@ def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_
         result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
 
         # Конвертируем текст с латексом в юникод
-        unicodeText = ConvertMdToPdf().convertLatexToText(md)
+        pdf, unicodeText = ConvertMdToPdf().convertLatexToText(md)
 
         if isSaveFile:
-            saveFile("output.txt", result)
+            savePdf(filenamePdf, pdf)
+            saveFile(filename, result)
 
         return result, unicodeText
 
@@ -31,16 +32,23 @@ def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_
         result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
 
         # Конвертируем текст с латексом в юникод
-        unicodeText = ConvertMdToPdf().convertLatexToText(md)
+        pdf, unicodeText = ConvertMdToPdf().convertLatexToText(md)
 
         if isSaveFile:
-            saveFile("output.txt", result)
+            savePdf(filenamePdf, pdf)
+            saveFile(filename, result)
 
         return result, unicodeText
 
     # если нет чекбокса и было событие change
     return gr.skip(), gr.skip()
 
+
+def savePdf(filename, pdf):
+    directory = Path(OUTPUT_PATH)
+    filePath = directory / filename
+    filePath.parent.mkdir(parents=True, exist_ok=True)
+    pdf.save(filePath)
 
 # Функция сохранеhния файла
 def saveFile(filename, text):
@@ -93,6 +101,7 @@ with gr.Blocks() as demo:
                     with gr.Group():
                         saveFileCheckbox = gr.Checkbox(label='save file', value=True, interactive=True)
                         filename = gr.Textbox(label='Output filename', value='output.txt', interactive=True)
+                        filenamePdf = gr.Textbox(label='Output filename for pdf', value='output.pdf', interactive=True)
 
 
                     # Акордион настроек faster whisper
@@ -127,7 +136,7 @@ with gr.Blocks() as demo:
                             systemPrompt = gr.Textbox(label='', value=DEFAULT_SYSTEM_PROMPT, interactive=True)
 
                         with gr.Row():
-                            llmModel = gr.Dropdown(label='models', choices=LLM_MODELS, value=LLM_MODELS[0], interactive=True)
+                            llmModel = gr.Dropdown(label='models', choices=LLM_MODELS, value=LLM_MODELS[1], interactive=True)
                             llmTemperature = gr.Number(label='Temperature', value=0.8, interactive=True )
 
         with gr.Column():
@@ -151,14 +160,14 @@ with gr.Blocks() as demo:
     # автоматический пайплайн
     recognizedText.change(
         generateByCondition,
-        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox],
+        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf],
         outputs=[refinedText, refinedTextMD]
     )
 
     # ручной запуск по кнопке
     refineTextBtn.click(
         generateByCondition,
-        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox],
+        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf],
         outputs=[refinedText, refinedTextMD]
     )
 

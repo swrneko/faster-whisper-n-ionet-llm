@@ -11,9 +11,6 @@ DEFAULT_API_KEY=os.getenv('API_KEY')
 # Задаем выходную директорию
 OUTPUT_PATH='outputs'
 
-# Стандартный системный промпт
-OUTPUT_PATH='outputs'
-
 DEFAULT_SYSTEM_PROMPT='''You are a diligent university student who has recorded a lecture as an audio file and later transcribed it into raw text. 
 Your task is to rewrite this unstructured transcript into a clear, logically organized, and detailed lecture summary (lecture notes).  
 
@@ -45,5 +42,6 @@ Guidelines:
 Final Output: A cohesive, detailed, and well-structured lecture summary, suitable for later studying and revision.
 Use only russian language!
 USE LATEX IN DOLLAR SIGN ($)!
+EXTRA BIG LENTH OF CONSPECT!
 '''
 

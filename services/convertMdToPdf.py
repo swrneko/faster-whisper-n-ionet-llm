@@ -13,9 +13,9 @@ class ConvertMdToPdf:
             text, 
             flags=re.DOTALL
         )
-        pdf = MarkdownPdf(toc_level=2, optimize=True)
+        pdf = MarkdownPdf(toc_level=0, optimize=True)
         pdf.add_section(Section(text))
-        return text
+        return pdf, text
 
     def replace_math(self, match):
         math_content = match.group(1) or match.group(2)  # $$...$$ или $...$

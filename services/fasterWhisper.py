@@ -2,7 +2,7 @@ from faster_whisper import WhisperModel
 
 class FasterWhisper:
     def recognize(self, model, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText):
-        model = WhisperModel(model, device='auto', compute_type='auto') # Задаем модель
+        model = WhisperModel(model, device='cuda', compute_type='auto') # Задаем модель
 
         segments, _ = model.transcribe( # Распознаем текст
             audioFile,
