@@ -1,5 +1,7 @@
 import re
 from pylatexenc.latex2text import LatexNodes2Text
+from markdown_pdf import MarkdownPdf
+from markdown_pdf import Section
 
 class ConvertMdToPdf:
     # Конвертирует md в pdf
@@ -11,6 +13,8 @@ class ConvertMdToPdf:
             text, 
             flags=re.DOTALL
         )
+        pdf = MarkdownPdf(toc_level=2, optimize=True)
+        pdf.add_section(Section(text))
         return text
 
     def replace_math(self, match):
@@ -18,6 +22,7 @@ class ConvertMdToPdf:
         try:
             # Преобразуем только математическое выражение
             converted = LatexNodes2Text().latex_to_text(math_content)
+
             return converted
         except:
             return math_content  # В случае ошибки оставляем как есть
