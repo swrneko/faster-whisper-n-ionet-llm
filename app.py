@@ -128,6 +128,8 @@ with gr.Blocks() as demo:
                     with gr.Row():
                         # Левая колонка в акордионе
                         with gr.Column():
+                            device = gr.Dropdown(label='Device', choices=["cpu", "cuda"], value="cuda", interactive=True)
+                            compute_type = gr.Dropdown(label='compute_type', choices=["auto", "int8", "float16", "float32"], value="auto", interactive=True)
                             fastWhisperModel = gr.Dropdown(label='Model', choices=FAST_WHISPER_MODELS, value=FAST_WHISPER_MODELS[11], interactive=True)
 
                             beamSize = gr.Number(label='beam_size', value=8, interactive=True)
@@ -135,6 +137,8 @@ with gr.Blocks() as demo:
                             vadFilter = gr.Checkbox(label='vad_filter', value=True, interactive=True)
                             wordTimestamps = gr.Checkbox(label='word_timestamps', value=True, interactive=True)
                             conditionOnPreviousText = gr.Checkbox(label='condition_on_previous_text', value=False, interactive=True)
+
+                            
 
                         # Правая колонка в акордионе
                         with gr.Column():
@@ -171,7 +175,7 @@ with gr.Blocks() as demo:
     saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filename)
     saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
 
-    recognizeBtn.click(FasterWhisper().recognize, outputs=[recognizedText], inputs=[fastWhisperModel, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
+    recognizeBtn.click(FasterWhisper().recognize, outputs=[recognizedText], inputs=[fastWhisperModel, device, compute_type, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
     
     # Если пайплайн включен то тогда делаем автоматически
     # автоматический пайплайн

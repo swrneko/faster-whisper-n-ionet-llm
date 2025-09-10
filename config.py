@@ -6,6 +6,7 @@ load_dotenv()
 FAST_WHISPER_MODELS = ['tiny', 'base', 'small', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large', 'distil-large-v2', 'distil-large-v3', 'distil-large-v3.5', 'large-v3-turbo', 'turbo']
 LLM_MODELS = ['openai/gpt-oss-120b', 'Qwen/Qwen3-235B-A22B-Thinking-2507', 'deepseek-ai/DeepSeek-R1-0528', 'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8', 'openai/gpt-oss-20b', 'Intel/Qwen3-Coder-480B-A35B-Instruct-int4-mixed-ar', 'meta-llama/Llama-3.2-90B-Vision-Instruct', 'mistralai/Mistral-Nemo-Instruct-2407', 'Qwen/Qwen2.5-VL-32B-Instruct', 'meta-llama/Llama-3.3-70B-Instruct', 'mistralai/Devstral-Small-2505', 'mistralai/Magistral-Small-2506', 'mistralai/Mistral-Large-Instruct-2411', 'CohereForAI/aya-expanse-32b']
 
+
 # Стандартный API ключ
 DEFAULT_API_KEY=os.getenv('API_KEY')
 # Задаем выходную директорию
