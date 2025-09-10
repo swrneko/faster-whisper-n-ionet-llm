@@ -9,8 +9,13 @@ class Llm:
 
     def generate(self, model:str, systemPrompt:str, userPrompt:str, temp:float):
         '''
-        prompt[user_promtp, system_ptompt]
-        Function generate text by prompt
+        Функция для генирации текста по промпту.
+
+        Args:
+            :param model: модель llm;
+            :param systemPrompt: системный промпт;
+            :param userPrompt: основной промпт промпт;
+            :param temp: температура генерации.
         '''
 
         # Получаем ответ от нейросети

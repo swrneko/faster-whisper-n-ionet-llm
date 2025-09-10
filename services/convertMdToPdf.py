@@ -6,6 +6,13 @@ from markdown_pdf import Section
 class ConvertMdToPdf:
     # Конвертирует md в pdf
     def convertLatexToText(self, text:str):
+        '''
+        Функция для конвертации LaTeX в текст;
+
+        Args:
+            :param text: текст содержащий LaTeX.
+        '''
+
         # Обрабатываем только математические выражения
         text = re.sub(
             r'\$\$(.*?)\$\$|\$(.*?)\$', 
