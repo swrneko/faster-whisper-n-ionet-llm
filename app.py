@@ -1,13 +1,18 @@
 import gradio as gr
-from pathlib import Path
 
 # Подгрузка сервисов
 from services.llm import Llm
 from services.fasterWhisper import FasterWhisper
 from services.convertMdToPdf import ConvertMdToPdf
 
+# Загрузка доп. модулей
+from handlers.fileHandlers import FileHandlers
+
 # Загрузка параметров конфигурации
 from config import *
+
+# Объект для работы с файлами
+fh = FileHandlers()
 
 # Функция транскрибации
 def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile, filename, filenamePdf):
@@ -21,8 +26,8 @@ def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_
         pdf, unicodeText = ConvertMdToPdf().convertLatexToText(md)
 
         if isSaveFile:
-            savePdf(filenamePdf, pdf)
-            saveFile(filename, result)
+            fh.saveFile(filenamePdf, pdf, OUTPUT_PATH)
+            fh.saveFile(filename, result, OUTPUT_PATH)
 
         return result, unicodeText
 
@@ -34,29 +39,13 @@ def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_
         pdf, unicodeText = ConvertMdToPdf().convertLatexToText(md)
 
         if isSaveFile:
-            savePdf(filenamePdf, pdf)
-            saveFile(filename, result)
+            fh.saveFile(filenamePdf, pdf, OUTPUT_PATH)
+            fh.saveFile(filename, result, OUTPUT_PATH)
 
         return result, unicodeText
 
     # если нет чекбокса и было событие change
     return gr.skip(), gr.skip()
-
-
-def savePdf(filename, pdf):
-    directory = Path(OUTPUT_PATH)
-    filePath = directory / filename
-    filePath.parent.mkdir(parents=True, exist_ok=True)
-    pdf.save(filePath)
-
-# Функция сохранеhния файла
-def saveFile(filename, text):
-    directory = Path(OUTPUT_PATH)
-    filePath = directory / filename
-    filePath.parent.mkdir(parents=True, exist_ok=True)
-    filePath.write_text(text, encoding='utf-8')
-
-#    ConvertMdToPdf().convert(text)
 
 # Функция для динамического обновления кнопки в зависимости от состояния checkbox
 def updateButton(isChecked):
