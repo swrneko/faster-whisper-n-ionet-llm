@@ -128,8 +128,8 @@ with gr.Blocks() as demo:
                     with gr.Row():
                         # Левая колонка в акордионе
                         with gr.Column():
-                            device = gr.Dropdown(label='Device', choices=["cpu", "cuda"], value="cuda", interactive=True)
-                            compute_type = gr.Dropdown(label='compute_type', choices=["auto", "int8", "float16", "float32"], value="auto", interactive=True)
+                            device = gr.Dropdown(label='Device', choices=DEVICES, value=DEVICES[1], interactive=True)
+                            compute_type = gr.Dropdown(label='compute_type', choices=COMPUTE_TYPE, value=COMPUTE_TYPE[0], interactive=True)
                             fastWhisperModel = gr.Dropdown(label='Model', choices=FAST_WHISPER_MODELS, value=FAST_WHISPER_MODELS[11], interactive=True)
 
                             beamSize = gr.Number(label='beam_size', value=8, interactive=True)
@@ -137,8 +137,6 @@ with gr.Blocks() as demo:
                             vadFilter = gr.Checkbox(label='vad_filter', value=True, interactive=True)
                             wordTimestamps = gr.Checkbox(label='word_timestamps', value=True, interactive=True)
                             conditionOnPreviousText = gr.Checkbox(label='condition_on_previous_text', value=False, interactive=True)
-
-                            
 
                         # Правая колонка в акордионе
                         with gr.Column():
