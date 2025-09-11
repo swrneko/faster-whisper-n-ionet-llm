@@ -1,11 +1,18 @@
 class GradioHandlers:
-    def __init__(self, gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper):
+    def __init__(self, gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper, GlueAudio):
         # Объект для работы с файлами
         self.fh = FileHandlers()
+        self.ga = GlueAudio()
         self.ConvertMdToPdf = ConvertMdToPdf()
         self.FasterWhisper = FasterWhisper()
         self.Llm = Llm
         self.gr = gr
+
+    def handleRecognizeBtn(self, audioFiles, model, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, filename, outPath):
+        audioFile = self.ga.glue(audioFiles)
+        file = self.fh.saveFile(filename, audioFile, outPath)
+
+        return self.FasterWhisper.recognize(model, device, compute_type, file, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
 
     # Функция улучшения текста
     def generateByCondition(self, api_key, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile, filename, filenamePdf, output_path):

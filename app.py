@@ -11,8 +11,9 @@ from handlers.gradioHandler import GradioHandlers
 from handlers.fileHandlers import FileHandlers
 from services.fasterWhisper import FasterWhisper
 from handlers.convertMdToPdf import ConvertMdToPdf
+from handlers.glueAudio import GlueAudio
 
-gh = GradioHandlers(gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper)
+gh = GradioHandlers(gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper, GlueAudio)
 
 def main():
     with gr.Blocks() as demo:
@@ -32,7 +33,7 @@ def main():
                 with gr.Row():
                     with gr.Accordion(label='Recognization and integration'):
                         with gr.Column():
-                            audioFile = gr.Audio(label='Load audio for transcribe', type="filepath")
+                            audioFiles = gr.Files(label='Load audio for transcribe', type="filepath", file_types=['audio'])
                             images = gr.Files(label='Upload images', file_types=['image'])
                             recognizeBtn = gr.Button('recognize and integrate', variant='primary')
 
@@ -99,7 +100,7 @@ def main():
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filename)
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
 
-        recognizeBtn.click(gh.FasterWhisper.recognize, outputs=[recognizedText], inputs=[fastWhisperModel, device, compute_type, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
+        recognizeBtn.click(gh.handleRecognizeBtn, outputs=[recognizedText], inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)])
         
         # Если пайплайн включен то тогда делаем автоматически
         # автоматический пайплайн

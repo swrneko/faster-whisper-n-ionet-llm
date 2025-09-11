@@ -13,6 +13,8 @@ DEFAULT_API_KEY=os.getenv('API_KEY')
 # Задаем выходную директорию
 OUTPUT_PATH='outputs'
 
+GLUED_AUDIO_FILENAME='glued.mp3'
+
 DEFAULT_SYSTEM_PROMPT='''You are a diligent university student who has recorded a lecture as an audio file and later transcribed it into raw text. 
 Your task is to rewrite this unstructured transcript into a clear, logically organized, and detailed lecture summary (lecture notes).  
 

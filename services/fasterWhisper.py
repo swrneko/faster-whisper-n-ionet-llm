@@ -23,7 +23,7 @@ class FasterWhisper:
         for seg in segments:
             text += f"[{self.format_timestamp(seg.start)} -> {self.format_timestamp(seg.end)}] {seg.text}" + '\n'
         
-        return(text)
+        return text
 
     def format_timestamp(self, seconds: float) -> str:
         millis = int(seconds * 1000)
