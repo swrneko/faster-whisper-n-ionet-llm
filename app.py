@@ -14,15 +14,6 @@ from handlers.convertMdToPdf import ConvertMdToPdf
 
 gh = GradioHandlers(gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper)
 
-###################################################
-# ____ ___.___  ___.          .__                 #
-#|    |   \   | \_ |__   ____ |  |   ______  _  __#
-#|    |   /   |  | __ \_/ __ \|  |  /  _ \ \/ \/ /#
-#|    |  /|   |  | \_\ \  ___/|  |_(  <_> )     / #
-#|______/ |___|  |___  /\___  >____/\____/ \/\_/  #
-#                    \/     \/                    #
-###################################################
-
 with gr.Blocks() as demo:
     gr.HTML('''
     <div align=center>
@@ -102,15 +93,6 @@ with gr.Blocks() as demo:
                     with gr.Row():
                         llmModel = gr.Dropdown(label='models', choices=LLM_MODELS, value=LLM_MODELS[1], interactive=True)
                         llmTemperature = gr.Number(label='Temperature', value=0.8, interactive=True )
-
-    ######################################################################
-    #.____                 .__         ___.          .__                 #
-    #|    |    ____   ____ |__| ____   \_ |__   ____ |  |   ______  _  __#
-    #|    |   /  _ \ / ___\|  |/ ___\   | __ \_/ __ \|  |  /  _ \ \/ \/ /#
-    #|    |__(  <_> ) /_/  >  \  \___   | \_\ \  ___/|  |_(  <_> )     / #
-    #|_______ \____/\___  /|__|\___  >  |___  /\___  >____/\____/ \/\_/  #
-    #        \/    /_____/         \/       \/     \/                    #
-    ######################################################################
 
     isPipelineEnabledCheckbox.change(gh.updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
     saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filename)
