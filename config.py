@@ -8,7 +8,6 @@ LLM_MODELS = ['openai/gpt-oss-120b', 'Qwen/Qwen3-235B-A22B-Thinking-2507', 'deep
 DEVICES = ['cpu', 'cuda']
 COMPUTE_TYPE = ['auto', 'int8', 'float16', 'float32']
 
-
 # Стандартный API ключ
 DEFAULT_API_KEY=os.getenv('API_KEY')
 # Задаем выходную директорию
@@ -46,5 +45,6 @@ Final Output: A cohesive, detailed, and well-structured lecture summary, suitabl
 Use only russian language!
 USE LATEX IN DOLLAR SIGN ($)!
 EXTRA BIG LENTH OF CONSPECT!
+MAKE AS LONG AS POSIBLE AND AS BE GOOD!
 '''
 

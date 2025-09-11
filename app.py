@@ -1,64 +1,18 @@
 import gradio as gr
 
-# Подгрузка сервисов
-from services.llm import Llm
-from services.fasterWhisper import FasterWhisper
-from services.convertMdToPdf import ConvertMdToPdf
-
-# Загрузка доп. модулей
-from handlers.fileHandlers import FileHandlers
-
 # Загрузка параметров конфигурации
 from config import *
 
-# Объект для работы с файлами
-fh = FileHandlers()
+# Подгрузка сервисов
+from services.llm import Llm
+from services.convertMdToPdf import ConvertMdToPdf
 
-# Функция транскрибации
-def generateByCondition(api_key, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile, filename, filenamePdf):
-    llm = Llm(api_key)
+# Загрузка доп. модулей
+from handlers.gradioHandler import GradioHandlers
+from handlers.fileHandlers import FileHandlers
+from services.fasterWhisper import FasterWhisper
 
-    # если чекбокс включен и событие было change → обрабатываем
-    if is_pipeline_enabled and trigger == "change":
-        result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
-
-        # Конвертируем текст с латексом в юникод
-        pdf, unicodeText = ConvertMdToPdf().convertLatexToText(md)
-
-        if isSaveFile:
-            fh.saveFile(filenamePdf, pdf, OUTPUT_PATH)
-            fh.saveFile(filename, result, OUTPUT_PATH)
-
-        return result, unicodeText
-
-    # если чекбокс выключен и событие было click → обрабатываем
-    if not is_pipeline_enabled and trigger == "click":
-        result, md = llm.generate(llm_model, system_prompt, recognized_text, llm_temperature)
-
-        # Конвертируем текст с латексом в юникод
-        pdf, unicodeText = ConvertMdToPdf().convertLatexToText(md)
-
-        if isSaveFile:
-            fh.saveFile(filenamePdf, pdf, OUTPUT_PATH)
-            fh.saveFile(filename, result, OUTPUT_PATH)
-
-        return result, unicodeText
-
-    # если нет чекбокса и было событие change
-    return gr.skip(), gr.skip()
-
-# Функция для динамического обновления кнопки в зависимости от состояния checkbox
-def updateButton(isChecked):
-    if not isChecked:
-        variant = 'primary'
-    else:
-        variant = 'secondary'
-
-    return gr.update(interactive=not isChecked, variant=variant)
-
-
-def updateTextbox(isChecked):
-    return gr.update(visible=isChecked)
+gh = GradioHandlers(gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper)
 
 ###################################################
 # ____ ___.___  ___.          .__                 #
@@ -158,24 +112,24 @@ with gr.Blocks() as demo:
     #        \/    /_____/         \/       \/     \/                    #
     ######################################################################
 
-    isPipelineEnabledCheckbox.change(updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
-    saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filename)
-    saveFileCheckbox.change(updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
+    isPipelineEnabledCheckbox.change(gh.updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
+    saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filename)
+    saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
 
-    recognizeBtn.click(FasterWhisper().recognize, outputs=[recognizedText], inputs=[fastWhisperModel, device, compute_type, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
+    recognizeBtn.click(gh.FasterWhisper.recognize, outputs=[recognizedText], inputs=[fastWhisperModel, device, compute_type, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText])
     
     # Если пайплайн включен то тогда делаем автоматически
     # автоматический пайплайн
     recognizedText.change(
-        generateByCondition,
-        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf],
+        gh.generateByCondition,
+        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
         outputs=[refinedText, refinedTextMD]
     )
 
     # ручной запуск по кнопке
     refineTextBtn.click(
-        generateByCondition,
-        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf],
+        gh.generateByCondition,
+        inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
         outputs=[refinedText, refinedTextMD]
     )
 
