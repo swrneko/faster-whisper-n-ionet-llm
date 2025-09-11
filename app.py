@@ -5,12 +5,12 @@ from config import *
 
 # Подгрузка сервисов
 from services.llm import Llm
-from services.convertMdToPdf import ConvertMdToPdf
 
 # Загрузка доп. модулей
 from handlers.gradioHandler import GradioHandlers
 from handlers.fileHandlers import FileHandlers
 from services.fasterWhisper import FasterWhisper
+from handlers.convertMdToPdf import ConvertMdToPdf
 
 gh = GradioHandlers(gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper)
 
