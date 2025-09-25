@@ -4,7 +4,9 @@ import gradio as gr
 from config import *
 
 # Подгрузка сервисов
-from services.llm import Llm
+from services.llm_factory import get_llm_provider
+
+
 
 # Загрузка доп. модулей
 from handlers.gradioHandler import GradioHandlers
@@ -13,7 +15,7 @@ from services.fasterWhisper import FasterWhisper
 from handlers.convertMdToPdf import ConvertMdToPdf
 from handlers.glueAudio import GlueAudio
 
-gh = GradioHandlers(gr, Llm, ConvertMdToPdf, FileHandlers, FasterWhisper, GlueAudio)
+gh = GradioHandlers(get_llm_provider, ConvertMdToPdf, FileHandlers, FasterWhisper, GlueAudio)
 
 def main():
     with gr.Blocks() as demo:
@@ -33,7 +35,7 @@ def main():
                 with gr.Row():
                     with gr.Accordion(label='Recognization and integration'):
                         with gr.Column():
-                            audioFiles = gr.Files(label='Load audio for transcribe', type="filepath", file_types=['audio'])
+                            audioFiles = gr.Files(label='Load audio for transcribe', type="filepath")
                             images = gr.Files(label='Upload images', file_types=['image'])
                             recognizeBtn = gr.Button('recognize and integrate', variant='primary')
 
@@ -86,15 +88,28 @@ def main():
                                     temp2 = gr.Number(label='temp_2', value=0.4, interactive=True)
 
                     # Нижний акордион настроек для api ключа llm
-                    with gr.Accordion(label='ai.io.net api settings'):
-                        apiKey = gr.Textbox(label='API key', value=DEFAULT_API_KEY, interactive=True)
+                    with gr.Accordion(label='LLM settings'):
+                        apiKey = gr.Textbox(label='API key (required for io.net, Gemini)', value=DEFAULT_API_KEY, interactive=True)
 
                         with gr.Accordion(label='System prompt'):
                             systemPrompt = gr.Textbox(label='', value=DEFAULT_SYSTEM_PROMPT, interactive=True)
 
                         with gr.Row():
-                            llmModel = gr.Dropdown(label='models', choices=LLM_MODELS, value=LLM_MODELS[1], interactive=True)
-                            llmTemperature = gr.Number(label='Temperature', value=0.8, interactive=True )
+                            # ВЫБОР ПРОВАЙДЕРА
+                            llmProvider = gr.Dropdown(
+                                label='LLM Provider', 
+                                choices=LLM_PROVIDERS, 
+                                value=LLM_PROVIDERS[0], 
+                                interactive=True
+                            )
+                            # СПИСОК МОДЕЛЕЙ (теперь зависит от провайдера)
+                            llmModel = gr.Dropdown(
+                                label='Models', 
+                                choices=LLM_MODELS[LLM_PROVIDERS[0]], # Модели для провайдера по умолчанию
+                                value=LLM_MODELS[LLM_PROVIDERS[0]][1], 
+                                interactive=True
+                            )
+                            llmTemperature = gr.Number(label='Temperature', value=0.8, interactive=True)
 
         isPipelineEnabledCheckbox.change(gh.updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filename)
@@ -106,14 +121,21 @@ def main():
         # автоматический пайплайн
         recognizedText.change(
             gh.generateByCondition,
-            inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
+            inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
             outputs=[refinedText, refinedTextMD]
         )
+        
+
 
         # ручной запуск по кнопке
+        llmProvider.change(
+            gh.update_model_dropdown, 
+            inputs=llmProvider, 
+            outputs=llmModel
+        )
         refineTextBtn.click(
             gh.generateByCondition,
-            inputs=[apiKey, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
+            inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
             outputs=[refinedText, refinedTextMD]
         )
 

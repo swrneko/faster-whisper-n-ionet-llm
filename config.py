@@ -4,12 +4,43 @@ from dotenv import load_dotenv
 load_dotenv()
 
 FAST_WHISPER_MODELS = ['tiny', 'base', 'small', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large', 'distil-large-v2', 'distil-large-v3', 'distil-large-v3.5', 'large-v3-turbo', 'turbo']
-LLM_MODELS = ['openai/gpt-oss-120b', 'Qwen/Qwen3-235B-A22B-Thinking-2507', 'deepseek-ai/DeepSeek-R1-0528', 'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8', 'openai/gpt-oss-20b', 'Intel/Qwen3-Coder-480B-A35B-Instruct-int4-mixed-ar', 'meta-llama/Llama-3.2-90B-Vision-Instruct', 'mistralai/Mistral-Nemo-Instruct-2407', 'Qwen/Qwen2.5-VL-32B-Instruct', 'meta-llama/Llama-3.3-70B-Instruct', 'mistralai/Devstral-Small-2505', 'mistralai/Magistral-Small-2506', 'mistralai/Mistral-Large-Instruct-2411', 'CohereForAI/aya-expanse-32b']
 DEVICES = ['cpu', 'cuda']
 COMPUTE_TYPE = ['auto', 'int8', 'float16', 'float32']
 
 # Стандартный API ключ
 DEFAULT_API_KEY=os.getenv('API_KEY')
+
+# Словарь провайдеров и их моделей
+LLM_PROVIDERS = ['io.net', 'Gemini', 'gpt4free']
+LLM_MODELS = {
+    'io.net': [
+        'openai/gpt-oss-120b', 'Qwen/Qwen3-235B-A22B-Thinking-2507', 
+        'deepseek-ai/DeepSeek-R1-0528', 'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8', 
+        'openai/gpt-oss-20b', 'Intel/Qwen3-Coder-480B-A35B-Instruct-int4-mixed-ar', 
+        'meta-llama/Llama-3.2-90B-Vision-Instruct', 'mistralai/Mistral-Nemo-Instruct-2407', 
+        'Qwen/Qwen2.5-VL-32B-Instruct', 'meta-llama/Llama-3.3-70B-Instruct', 
+        'mistralai/Devstral-Small-2505', 'mistralai/Magistral-Small-2506', 
+        'mistralai/Mistral-Large-Instruct-2411', 'CohereForAI/aya-expanse-32b'
+    ],
+    'Gemini': [
+        'gemini-2.5-pro',
+        'gemini-2.5-flash',
+        'gemini-2.5-flash-lite'
+    ],
+    'gpt4free': [ # Модели могут меняться, проверьте документацию g4f
+        'default',
+        'gpt-4',
+        'sonar-reasoning',
+        'command-r-plus',
+        'llama-3.3-70b',
+        'hermes-3-llama-3.1-405b'
+        'qwen-3-235b',
+        'gpt-4o-mini',
+        'deepseek-r1',
+        'PollinationsAI:gpt-5-nano'
+    ]
+}
+
 # Задаем выходную директорию
 OUTPUT_PATH='outputs'
 
