@@ -113,7 +113,11 @@ def main():
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filename)
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
 
-        recognizeBtn.click(gh.handleRecognizeBtn, outputs=[recognizedText], inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)])
+        recognizeBtn.click(
+            gh.handleRecognizeBtn, 
+            inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)],
+            outputs=[recognizedText], 
+            )
         
         # Если пайплайн включен то тогда делаем автоматически
         # автоматический пайплайн

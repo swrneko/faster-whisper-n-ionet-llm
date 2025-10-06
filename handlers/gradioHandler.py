@@ -11,14 +11,22 @@ class GradioHandlers:
         self.FasterWhisper = FasterWhisper()
         self.llm_factory = llm_factory # Сохраняем фабрику
 
-    def handleRecognizeBtn(self, audioFiles, model, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, filename, outPath):
+    def handleRecognizeBtn(
+            self, audioFiles, model, device, 
+            compute_type, beamSize, vadFilter, 
+            minSilenceDurationMs, speechPadMs, 
+            temp0, temp1, temp2, 
+            wordTimestamps, noSpeechThreshold, conditionOnPreviousText, 
+            filename, outPath):
         audioFile = self.ga.glue(audioFiles)
         file = self.fh.saveFile(filename, audioFile, outPath)
-
         return self.FasterWhisper.recognize(model, device, compute_type, file, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
 
     # Функция улучшения текста
-    def generateByCondition(self, api_key, llm_provider, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile, filename, filenamePdf, output_path):
+    def generateByCondition(self, api_key, llm_provider, 
+                            llm_model, system_prompt, recognized_text, 
+                            llm_temperature, is_pipeline_enabled, trigger, 
+                            isSaveFile, filename, filenamePdf, output_path):
         try:
             # Получаем нужный провайдер через фабрику
             provider = self.llm_factory(llm_provider, api_key)
