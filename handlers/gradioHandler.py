@@ -1,6 +1,6 @@
 from config import LLM_MODELS # Импортируем словарь моделей
 import gradio as gr 
-
+from config import GEMINI_API_KEY, IO_API_KEY
 
 class GradioHandlers:
     def __init__(self, llm_factory, ConvertMdToPdf, FileHandlers, FasterWhisper, GlueAudio):
@@ -24,8 +24,8 @@ class GradioHandlers:
             provider = self.llm_factory(llm_provider, api_key)
         except ValueError as e:
             # Если API ключ не предоставлен для нужного провайдера, выводим ошибку
-            self.gr.Warning(str(e))
-            return self.gr.skip(), self.gr.skip()
+            gr.Warning(str(e))
+            return gr.skip(), gr.skip()
 
         def process():
             result, md = provider.generate(llm_model, system_prompt, recognized_text, llm_temperature)
@@ -53,7 +53,9 @@ class GradioHandlers:
         default_value = models[0] if models else None
         
         # Возвращаем обновленный компонент. Используем 'gr' напрямую.
-        return gr.update(choices=models, value=default_value)
+        if provider == 'io.net': return gr.update(choices=models, value=default_value), gr.update(label='API key (required for io.net, Gemini)', value=IO_API_KEY, interactive=True)
+        if provider == 'Gemini': return gr.update(choices=models, value=default_value), gr.update(label='API key (required for Oio.net, Gemini)', value=GEMINI_API_KEY, interactive=True)
+        if provider == 'gpt4free': return gr.update(choices=models, value=default_value), gr.update(label='API key (required for Oio.net, Gemini)', value="", interactive=True)
 
      # Функция для динамического обновления кнопки
     def updateButton(self, isChecked):

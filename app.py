@@ -129,7 +129,7 @@ def main():
         llmProvider.change(
             gh.update_model_dropdown, 
             inputs=llmProvider, 
-            outputs=llmModel
+            outputs=[llmModel, apiKey]
         )
         refineTextBtn.click(
             gh.generateByCondition,

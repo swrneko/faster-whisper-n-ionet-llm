@@ -8,7 +8,10 @@ DEVICES = ['cpu', 'cuda']
 COMPUTE_TYPE = ['auto', 'int8', 'float16', 'float32']
 
 # Стандартный API ключ
-DEFAULT_API_KEY=os.getenv('API_KEY')
+IO_API_KEY=os.getenv('IO_API_KEY')
+GEMINI_API_KEY=os.getenv('GEMINI_API_KEY')
+DEFAULT_API_KEY=IO_API_KEY
+
 
 # Словарь провайдеров и их моделей
 LLM_PROVIDERS = ['io.net', 'Gemini', 'gpt4free']
