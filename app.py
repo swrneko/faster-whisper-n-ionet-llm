@@ -5,13 +5,11 @@ from config import *
 
 # Подгрузка сервисов
 from services.llm_factory import get_llm_provider
-
-
+from services.fasterWhisper import FasterWhisper
 
 # Загрузка доп. модулей
 from handlers.gradioHandler import GradioHandlers
 from handlers.fileHandlers import FileHandlers
-from services.fasterWhisper import FasterWhisper
 from handlers.convertMdToPdf import ConvertMdToPdf
 from handlers.glueAudio import GlueAudio
 
