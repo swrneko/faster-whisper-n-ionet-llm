@@ -9,13 +9,24 @@ class GradioHandlers:
         self.ga = GlueAudio()
         self.ConvertMdToPdf = ConvertMdToPdf()
         self.FasterWhisper = FasterWhisper()
-        self.llm_factory = llm_factory # Сохраняем фабрику
+        self.llm_factory = llm_factory
 
-    def handleRecognizeBtn(self, audioFiles, model, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, filename, outPath):
-        audioFile = self.ga.glue(audioFiles)
-        file = self.fh.saveFile(filename, audioFile, outPath)
+    def handleRecognizeBtn(
+                            self, 
+                            audioFiles, model, device, compute_type, beamSize, vadFilter, 
+                            minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, 
+                            noSpeechThreshold, conditionOnPreviousText, filename, outPath
+                            ):
+        try:
+            audioFile = self.ga.glue(audioFiles, output)
+            file = self.fh.saveFile(filename, audioFile, outPath)
 
-        return self.FasterWhisper.recognize(model, device, compute_type, file, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
+            return self.FasterWhisper.recognize(model, device, compute_type, file, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
+        
+        except (FileNotFoundError, RuntimeError) as e:
+            # Если FFmpeg не найден или произошла ошибка, сообщаем пользователю
+            gr.Warning(str(e))
+            return "" # Возвращаем пустую строку в текстовое поле
 
     # Функция улучшения текста
     def generateByCondition(self, api_key, llm_provider, llm_model, system_prompt, recognized_text, llm_temperature, is_pipeline_enabled, trigger, isSaveFile, filename, filenamePdf, output_path):
