@@ -26,6 +26,7 @@ class FasterWhisper:
 
         for seg in segments:
             text += f"[{self.format_timestamp(seg.start)} -> {self.format_timestamp(seg.end)}] {seg.text}" + '\n'
+            print(f"[{self.format_timestamp(seg.start)} -> {self.format_timestamp(seg.end)}] {seg.text}")
         
         return text
 

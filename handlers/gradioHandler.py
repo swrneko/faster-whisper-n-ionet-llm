@@ -12,15 +12,23 @@ class GradioHandlers:
         self.llm_factory = llm_factory # Сохраняем фабрику
 
     def handleRecognizeBtn(
-            self, audioFiles, model, device, 
-            compute_type, beamSize, vadFilter, 
-            minSilenceDurationMs, speechPadMs, 
-            temp0, temp1, temp2, 
-            wordTimestamps, noSpeechThreshold, conditionOnPreviousText, 
-            filename, outPath):
-        audioFile = self.ga.glue(audioFiles)
-        file = self.fh.saveFile(filename, audioFile, outPath)
-        return self.FasterWhisper.recognize(model, device, compute_type, file, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
+            self, audioFiles, model, device, compute_type, beamSize, vadFilter, 
+            minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, 
+            wordTimestamps, noSpeechThreshold, conditionOnPreviousText, filename, outPath
+            ):
+        try:
+            glued_audio_path = self.ga.glue(
+                audio_files=[f.name for f in audioFiles], # Передаем список путей
+                output_path=outPath,
+                output_filename=filename
+            )
+        except (FileNotFoundError, RuntimeError) as e:
+            # Если FFmpeg не найден или произошла ошибка, сообщаем пользователю
+            gr.Warning(str(e))
+            return "" # Возвращаем пустую строку в текстовое поле
+
+        # Передаем путь к склеенному файлу в FasterWhisper
+        return self.FasterWhisper.recognize(model, device, compute_type, str(glued_audio_path), beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
 
     # Функция улучшения текста
     def generateByCondition(self, api_key, llm_provider, 
