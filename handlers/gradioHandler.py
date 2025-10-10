@@ -12,23 +12,6 @@ class GradioHandlers:
         self.llm_factory = llm_factory
 
     def handleRecognizeBtn(
-<<<<<<< HEAD
-                            self, 
-                            audioFiles, model, device, compute_type, beamSize, vadFilter, 
-                            minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, 
-                            noSpeechThreshold, conditionOnPreviousText, filename, outPath
-                            ):
-        try:
-            audioFile = self.ga.glue(audioFiles, output)
-            file = self.fh.saveFile(filename, audioFile, outPath)
-
-            return self.FasterWhisper.recognize(model, device, compute_type, file, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
-        
-        except (FileNotFoundError, RuntimeError) as e:
-            # Если FFmpeg не найден или произошла ошибка, сообщаем пользователю
-            gr.Warning(str(e))
-            return "" # Возвращаем пустую строку в текстовое поле
-=======
             self, audioFiles, model, device, compute_type, beamSize, vadFilter, 
             minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, 
             wordTimestamps, noSpeechThreshold, conditionOnPreviousText, filename, outPath
@@ -46,7 +29,6 @@ class GradioHandlers:
 
         # Передаем путь к склеенному файлу в FasterWhisper
         return self.FasterWhisper.recognize(model, device, compute_type, str(glued_audio_path), beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText)
->>>>>>> 1e5105b7d658310c159c65ba318c08522506c3fb
 
     # Функция улучшения текста
     def generateByCondition(self, api_key, llm_provider, 

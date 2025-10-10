@@ -115,13 +115,9 @@ def main():
 
         recognizeBtn.click(
             gh.handleRecognizeBtn, 
-<<<<<<< HEAD
-            inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)]
-=======
             inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, 
                     vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, 
                     wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)],
->>>>>>> 1e5105b7d658310c159c65ba318c08522506c3fb
             outputs=[recognizedText], 
             )
         

@@ -5,25 +5,13 @@ from pathlib import Path
 class GlueAudio():
     def glue(self, audio_files: list, output_path: str, output_filename: str) -> Path:
         """
-<<<<<<< HEAD
         Склеивает аудиофайлы с помощью FFmpeg, используя промежуточный список файлов.
         Этот метод чрезвычайно эффективен по памяти и скорости.
-=======
-        Склеивает аудиофайлы РАЗНЫХ форматов с помощью FFmpeg и filter_complex.
-        Это универсальный и эффективный по памяти метод.
->>>>>>> 1e5105b7d658310c159c65ba318c08522506c3fb
 
         Args:
             audio_files (list): Список путей к исходным аудиофайлам.
             output_path (str): Директория для сохранения итогового файла.
             output_filename (str): Имя итогового склеенного файла.
-<<<<<<< HEAD
-
-        Returns:
-            Path: Путь к созданному склеенному файлу.
-        """
-
-=======
 
         Returns:
             Path: Путь к созданному склеенному файлу.
@@ -71,4 +59,3 @@ class GlueAudio():
             raise RuntimeError(f"Ошибка FFmpeg при склейке файлов: {e.stderr}")
         
         return final_audio_path
->>>>>>> 1e5105b7d658310c159c65ba318c08522506c3fb
