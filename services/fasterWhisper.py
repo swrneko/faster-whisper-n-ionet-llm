@@ -1,7 +1,11 @@
 from faster_whisper import WhisperModel
 
 class FasterWhisper:
-    def recognize(self, model, device, compute_type, audioFile, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText):
+    def recognize(self, model, device, compute_type, 
+                  audioFile, beamSize, vadFilter, 
+                  minSilenceDurationMs, speechPadMs, 
+                  temp0, temp1, temp2, wordTimestamps, 
+                  noSpeechThreshold, conditionOnPreviousText):
         model = WhisperModel(model, device=device, compute_type=compute_type) # Задаем модель
 
         segments, _ = model.transcribe( # Распознаем текст
@@ -22,6 +26,7 @@ class FasterWhisper:
 
         for seg in segments:
             text += f"[{self.format_timestamp(seg.start)} -> {self.format_timestamp(seg.end)}] {seg.text}" + '\n'
+            print(f"[{self.format_timestamp(seg.start)} -> {self.format_timestamp(seg.end)}] {seg.text}")
         
         return text
 

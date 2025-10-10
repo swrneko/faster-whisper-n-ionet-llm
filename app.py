@@ -115,7 +115,13 @@ def main():
 
         recognizeBtn.click(
             gh.handleRecognizeBtn, 
+<<<<<<< HEAD
             inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)]
+=======
+            inputs=[audioFiles, fastWhisperModel, device, compute_type, beamSize, 
+                    vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, 
+                    wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)],
+>>>>>>> 1e5105b7d658310c159c65ba318c08522506c3fb
             outputs=[recognizedText], 
             )
         
@@ -123,7 +129,8 @@ def main():
         # автоматический пайплайн
         recognizedText.change(
             gh.generateByCondition,
-            inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
+            inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, 
+                    isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
             outputs=[refinedText, refinedTextMD]
         )
         
@@ -137,7 +144,8 @@ def main():
         )
         refineTextBtn.click(
             gh.generateByCondition,
-            inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
+            inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, 
+                    isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
             outputs=[refinedText, refinedTextMD]
         )
 
