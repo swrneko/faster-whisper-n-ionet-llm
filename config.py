@@ -14,7 +14,7 @@ DEFAULT_API_KEY=IO_API_KEY
 
 
 # Словарь провайдеров и их моделей
-LLM_PROVIDERS = ['io.net', 'Gemini', 'gpt4free']
+LLM_PROVIDERS = ['io.net', 'Gemini', 'gpt4free', 'Custom']
 LLM_MODELS = {
     'io.net': [
         'openai/gpt-oss-120b', 'Qwen/Qwen3-235B-A22B-Thinking-2507', 
@@ -30,7 +30,7 @@ LLM_MODELS = {
         'gemini-2.5-flash',
         'gemini-2.5-flash-lite'
     ],
-    'gpt4free': [ # Модели могут меняться, проверьте документацию g4f
+    'gpt4free': [
         'default',
         'gpt-4',
         'sonar-reasoning',
@@ -41,7 +41,14 @@ LLM_MODELS = {
         'gpt-4o-mini',
         'deepseek-r1',
         'PollinationsAI:gpt-5-nano'
-    ]
+    ],
+    'Custom': [
+        'qwen/qwen3-vl-30b',
+        'qwen/qwen3-coder-30b',
+        'openai/gpt-oss-20b', 
+        'qwen3-vl-8b-thinking', 
+        'qwen/qwen3-vl-8b',
+    ],
 }
 
 # Задаем выходную директорию

@@ -41,7 +41,7 @@ class GeminiProvider(BaseLLMProvider):
         
         try:
             # 4. Отправляем POST-запрос с данными и настройками прокси
-            response = requests.post(api_url, json=data, proxies=proxies, timeout=90)
+            response = requests.post(api_url, json=data, proxies=proxies, timeout=400)
             
             # Проверяем, не вернул ли сервер ошибку (например, 4xx или 5xx)
             response.raise_for_status()

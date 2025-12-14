@@ -1,13 +1,7 @@
 import gradio as gr
-
-# Загрузка параметров конфигурации
 from config import *
-
-# Подгрузка сервисов
 from services.llm_factory import get_llm_provider
 from services.fasterWhisper import FasterWhisper
-
-# Загрузка доп. модулей
 from handlers.gradioHandler import GradioHandlers
 from handlers.fileHandlers import FileHandlers
 from handlers.convertMdToPdf import ConvertMdToPdf
@@ -17,16 +11,9 @@ gh = GradioHandlers(get_llm_provider, ConvertMdToPdf, FileHandlers, FasterWhispe
 
 def main():
     with gr.Blocks() as demo:
-        gr.HTML('''
-        <div align=center>
-            <h1>
-                Faster Whisper WebUI
-            </h1>
-        </div>
-        ''')
+        gr.HTML('<div align=center><h1>Faster Whisper WebUI</h1></div>')
 
         with gr.Row():
-            # Вкладка с основным взаимодействием
             with gr.Tab('Actions'):
                 isPipelineEnabledCheckbox = gr.Checkbox(label='is pipeline enabled', value=True, interactive=True)
 
@@ -36,79 +23,64 @@ def main():
                             audioFiles = gr.Files(label='Load audio for transcribe', type="filepath")
                             images = gr.Files(label='Upload images', file_types=['image'])
                             recognizeBtn = gr.Button('recognize and integrate', variant='primary')
-
                             with gr.Accordion(label='Recognized text'):
                                 recognizedText = gr.TextArea(label='')
 
                     with gr.Accordion(label='LLM'):
                         with gr.Column():
                             refineTextBtn = gr.Button('refine text', variant='secondary', interactive=False)
-
                             with gr.Accordion(label='Refined text raw'):
                                 refinedText = gr.Textbox(label='', show_copy_button=True)
-
                             with gr.Accordion(label='Refined text md formated'):
                                 refinedTextMD = gr.Markdown(label='')
 
-            # Вкладка с настройками
             with gr.Tab('Settings'):
                 with gr.Column():
-                    # Первое поле на всю ширину в акордионе настроек
                     with gr.Accordion('File settings'):
                         saveFileCheckbox = gr.Checkbox(label='save file', value=True, interactive=True)
-                        filename = gr.Textbox(label='Output filename', value='output.txt', interactive=True)
+                        filename = gr.Textbox(label='Output filename', value='output.md', interactive=True)
                         filenamePdf = gr.Textbox(label='Output filename for pdf', value='output.pdf', interactive=True)
 
-                    # Акордион настроек faster whisper
                     with gr.Accordion(label='Faster whisper settings'):
                         with gr.Row():
-                            # Левая колонка в акордионе
                             with gr.Column():
                                 device = gr.Dropdown(label='Device', choices=DEVICES, value=DEVICES[1], interactive=True)
                                 compute_type = gr.Dropdown(label='compute_type', choices=COMPUTE_TYPE, value=COMPUTE_TYPE[0], interactive=True)
                                 fastWhisperModel = gr.Dropdown(label='Model', choices=FAST_WHISPER_MODELS, value=FAST_WHISPER_MODELS[11], interactive=True)
-
                                 beamSize = gr.Number(label='beam_size', value=8, interactive=True)
                                 noSpeechThreshold  = gr.Number(label='no_speech_threshold', value=0.5, interactive=True)
                                 vadFilter = gr.Checkbox(label='vad_filter', value=True, interactive=True)
                                 wordTimestamps = gr.Checkbox(label='word_timestamps', value=True, interactive=True)
                                 conditionOnPreviousText = gr.Checkbox(label='condition_on_previous_text', value=False, interactive=True)
-
-                            # Правая колонка в акордионе
                             with gr.Column():
                                 with gr.Accordion(label='Vad parameters'):
                                     minSilenceDurationMs = gr.Number(label='min_silence_duration_ms', value=300, interactive=True)
                                     speechPadMs = gr.Number(label='speech_pad_ms', value=200, interactive=True)
-
                                 with gr.Accordion(label='Temperature'):
                                     temp0 = gr.Number(label='temp_0', value=0.0, interactive=True)
                                     temp1 = gr.Number(label='temp_1', value=0.2, interactive=True)
                                     temp2 = gr.Number(label='temp_2', value=0.4, interactive=True)
 
-                    # Нижний акордион настроек для api ключа llm
                     with gr.Accordion(label='LLM settings'):
                         apiKey = gr.Textbox(label='API key (required for io.net, Gemini)', value=DEFAULT_API_KEY, interactive=True)
-
                         with gr.Accordion(label='System prompt'):
                             systemPrompt = gr.Textbox(label='', value=DEFAULT_SYSTEM_PROMPT, interactive=True)
 
                         with gr.Row():
-                            # ВЫБОР ПРОВАЙДЕРА
-                            llmProvider = gr.Dropdown(
-                                label='LLM Provider', 
-                                choices=LLM_PROVIDERS, 
-                                value=LLM_PROVIDERS[0], 
-                                interactive=True
-                            )
-                            # СПИСОК МОДЕЛЕЙ (теперь зависит от провайдера)
-                            llmModel = gr.Dropdown(
-                                label='Models', 
-                                choices=LLM_MODELS[LLM_PROVIDERS[0]], # Модели для провайдера по умолчанию
-                                value=LLM_MODELS[LLM_PROVIDERS[0]][1], 
-                                interactive=True
-                            )
+                            llmProvider = gr.Dropdown(label='LLM Provider', choices=LLM_PROVIDERS, value=LLM_PROVIDERS[0], interactive=True)
+                            llmModel = gr.Dropdown(label='Models', choices=LLM_MODELS[LLM_PROVIDERS[0]], value=LLM_MODELS[LLM_PROVIDERS[0]][1], interactive=True)
                             llmTemperature = gr.Number(label='Temperature', value=0.8, interactive=True)
+                        
+                        # Настройки Custom провайдера
+                        with gr.Accordion(label='Custom Provider Settings', open=True):
+                            customBaseUrl = gr.Textbox(
+                                label='Base URL', 
+                                value='http://127.0.0.1:1234/v1/', 
+                                interactive=True,
+                                visible=False # Скрыто по умолчанию
+                            )
 
+        # Обработчики событий
         isPipelineEnabledCheckbox.change(gh.updateButton, inputs=[isPipelineEnabledCheckbox], outputs=refineTextBtn)
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filename)
         saveFileCheckbox.change(gh.updateTextbox, inputs=saveFileCheckbox, outputs=filenamePdf)
@@ -119,29 +91,34 @@ def main():
                     vadFilter, minSilenceDurationMs, speechPadMs, temp0, temp1, temp2, 
                     wordTimestamps, noSpeechThreshold, conditionOnPreviousText, gr.State(GLUED_AUDIO_FILENAME), gr.State(OUTPUT_PATH)],
             outputs=[recognizedText], 
-            )
+        )
         
-        # Если пайплайн включен то тогда делаем автоматически
-        # автоматический пайплайн
+        # --- ИСПРАВЛЕНИЕ: ДОБАВЛЕН customBaseUrl В INPUTS ---
         recognizedText.change(
             gh.generateByCondition,
             inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, 
-                    isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
+                    isPipelineEnabledCheckbox, gr.State("change"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH), customBaseUrl],
             outputs=[refinedText, refinedTextMD]
         )
-        
 
-
-        # ручной запуск по кнопке
+        # Обновление выпадающего списка моделей и поля API ключа
         llmProvider.change(
             gh.update_model_dropdown, 
             inputs=llmProvider, 
             outputs=[llmModel, apiKey]
         )
+        
+        # Переключение видимости URL для Custom провайдера
+        llmProvider.change(
+            fn=gh.toggle_custom_url,
+            inputs=llmProvider,
+            outputs=[customBaseUrl]
+        )
+
         refineTextBtn.click(
             gh.generateByCondition,
             inputs=[apiKey, llmProvider, llmModel, systemPrompt, recognizedText, llmTemperature, 
-                    isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH)],
+                    isPipelineEnabledCheckbox, gr.State("click"), saveFileCheckbox, filename, filenamePdf, gr.State(OUTPUT_PATH), customBaseUrl],
             outputs=[refinedText, refinedTextMD]
         )
 

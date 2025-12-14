@@ -1,0 +1,7 @@
+pandoc "out.md" -o output1310.pdf \
+  --pdf-engine=xelatex \
+  -V geometry:margin=2.5cm \
+  -V fontsize=12pt \
+  -V mainfont="Times New Roman" \
+  -V colorlinks=true \
+  -V linkcolor=blue\
